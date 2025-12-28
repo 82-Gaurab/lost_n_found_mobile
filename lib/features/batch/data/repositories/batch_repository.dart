@@ -28,21 +28,42 @@ class BatchRepository implements IBatchRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> deleteBatch(BatchEntity batch) {
-    // TODO: implement deleteBatch
-    throw UnimplementedError();
+  Future<Either<Failure, bool>> deleteBatch(String batchId) async {
+    try {
+      final result = await _datasource.deleteBatch(batchId);
+      if (result) {
+        return Right(true);
+      }
+
+      return Left(LocalDatabaseFailure(message: ' Failed to delete batch'));
+    } catch (e) {
+      return Left(LocalDatabaseFailure(message: e.toString()));
+    }
   }
 
   @override
-  Future<Either<Failure, List<BatchEntity>>> getAllBatches() {
-    // TODO: implement getAllBatches
-    throw UnimplementedError();
+  Future<Either<Failure, List<BatchEntity>>> getAllBatches() async {
+    try {
+      final models = await _datasource.getAllBatches();
+      final entities = BatchHiveModel.toEntityList(models);
+      return Right(entities);
+    } catch (e) {
+      return Left(LocalDatabaseFailure(message: e.toString()));
+    }
   }
 
   @override
-  Future<Either<Failure, BatchEntity>> getBatchById(String batchId) {
-    // TODO: implement getBatchById
-    throw UnimplementedError();
+  Future<Either<Failure, BatchEntity>> getBatchById(String batchId) async {
+    try {
+      final model = await _datasource.getBatchById(batchId);
+      if (model != null) {
+        final entity = model.toEntity();
+        return Right(entity);
+      }
+      return Left(LocalDatabaseFailure(message: 'Batch not found'));
+    } catch (e) {
+      return Left(LocalDatabaseFailure(message: e.toString()));
+    }
   }
 
   @override

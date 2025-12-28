@@ -7,5 +7,5 @@ abstract interface class IBatchRepository {
   Future<Either<Failure, BatchEntity>> getBatchById(String batchId);
   Future<Either<Failure, bool>> createBatch(BatchEntity batch);
   Future<Either<Failure, bool>> updateBatch(BatchEntity batch);
-  Future<Either<Failure, bool>> deleteBatch(BatchEntity batch);
+  Future<Either<Failure, bool>> deleteBatch(String batchId);
 }
