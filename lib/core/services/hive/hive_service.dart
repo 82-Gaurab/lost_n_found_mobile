@@ -26,11 +26,6 @@ class HiveService {
     await Hive.openBox<BatchHiveModel>(HiveTableConstant.batchTable);
   }
 
-  // Delete all batches
-  Future<void> deleteAllBatches() async {
-    await _batchBox.clear();
-  }
-
   // CLose all boxes
   Future<void> close() async {
     await Hive.close();
@@ -66,5 +61,10 @@ class HiveService {
   // Delete a batch
   Future<void> deleteBatch(String batchId) async {
     await _batchBox.delete(batchId);
+  }
+
+  // Delete all batches
+  Future<void> deleteAllBatches() async {
+    await _batchBox.clear();
   }
 }
