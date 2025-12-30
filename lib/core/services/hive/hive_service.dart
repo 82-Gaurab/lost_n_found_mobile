@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:lost_n_found/core/constants/hive_table_constant.dart';
 import 'package:lost_n_found/features/batch/data/models/batch_hive_model.dart';
+import 'package:lost_n_found/features/category/data/model/category_hive_model.dart';
 import 'package:path_provider/path_provider.dart';
 
 class HiveService {
@@ -66,5 +67,40 @@ class HiveService {
   // Delete all batches
   Future<void> deleteAllBatches() async {
     await _batchBox.clear();
+  }
+
+  // =================== Category CRUD Operations ===========================
+  Box<CategoryHiveModel> get _categoryBox =>
+      Hive.box<CategoryHiveModel>(HiveTableConstant.categoryTable);
+
+  // get all category
+  List<CategoryHiveModel> getAllCategories() {
+    return _categoryBox.values.toList();
+  }
+
+  // get category by ID
+  CategoryHiveModel? getCategoryById(String categoryId) {
+    return _categoryBox.get(categoryId);
+  }
+
+  // create category
+  Future<CategoryHiveModel> createCategory(CategoryHiveModel category) async {
+    await _categoryBox.put(category.categoryId, category);
+    return category;
+  }
+
+  // update category
+  Future<void> updateCategory(CategoryHiveModel category) async {
+    await _categoryBox.put(category.categoryId, category);
+  }
+
+  // delete category
+  Future<void> deleteCategory(String categoryId) async {
+    await _categoryBox.delete(categoryId);
+  }
+
+  // delete All category
+  Future<void> deleteAllCategory() async {
+    await _categoryBox.clear();
   }
 }
