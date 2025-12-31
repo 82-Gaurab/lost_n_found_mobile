@@ -4,6 +4,7 @@ import 'package:lost_n_found/features/batch/data/datasources/batch_datasource.da
 import 'package:lost_n_found/features/batch/data/models/batch_hive_model.dart';
 
 final batchLocalDatasourceProvider = Provider<IBatchDatasource>((ref) {
+  // NOTE: Dependency Injection using Provider
   return BatchLocalDatasource(hiveService: ref.read(hiveServiceProvider));
 });
 

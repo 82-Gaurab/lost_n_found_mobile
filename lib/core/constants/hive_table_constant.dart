@@ -4,6 +4,7 @@ class HiveTableConstant {
   // Database name
   static const String dbName = "lost_n_found_db";
 
+  // NOTE: Tables -> Box : Index
   static const int batchTypeId = 0;
   static const String batchTable = 'batch_table';
 

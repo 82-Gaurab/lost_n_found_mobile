@@ -19,6 +19,29 @@ class HiveService {
     Hive.init(path);
     _registerAdapters();
     await _openBoxes();
+    await insertBatchDummyData();
+  }
+
+  Future<void> insertBatchDummyData() async {
+    final batchBox = Hive.box<BatchHiveModel>(HiveTableConstant.batchTable);
+
+    if (batchBox.isNotEmpty) {
+      return;
+    }
+
+    final dummyBatches = [
+      BatchHiveModel(batchName: '35A'),
+      BatchHiveModel(batchName: '35B'),
+      BatchHiveModel(batchName: '35C'),
+      BatchHiveModel(batchName: '36A'),
+      BatchHiveModel(batchName: '36B'),
+      BatchHiveModel(batchName: '37A'),
+      BatchHiveModel(batchName: '38B'),
+    ];
+
+    for (var batch in dummyBatches) {
+      await batchBox.put(batch.batchId, batch);
+    }
   }
 
   void _registerAdapters() {
@@ -51,6 +74,7 @@ class HiveService {
 
   // Get all batches
   List<BatchHiveModel> getAllBatches() {
+    print("${_batchBox.values}");
     return _batchBox.values.toList();
   }
 
