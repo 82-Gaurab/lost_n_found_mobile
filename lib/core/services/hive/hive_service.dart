@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:lost_n_found/core/constants/hive_table_constant.dart';
+import 'package:lost_n_found/features/auth/data/models/auth_hive_model.dart';
 import 'package:lost_n_found/features/batch/data/models/batch_hive_model.dart';
 import 'package:lost_n_found/features/category/data/model/category_hive_model.dart';
 import 'package:path_provider/path_provider.dart';
@@ -48,11 +49,23 @@ class HiveService {
     if (!Hive.isAdapterRegistered(HiveTableConstant.batchTypeId)) {
       Hive.registerAdapter(BatchHiveModelAdapter());
     }
+
+    // category register
+    if (!Hive.isAdapterRegistered(HiveTableConstant.categoryTypeId)) {
+      Hive.registerAdapter(CategoryHiveModelAdapter());
+    }
+
+    // auth register
+    if (!Hive.isAdapterRegistered(HiveTableConstant.authTypeId)) {
+      Hive.registerAdapter(AuthHiveModelAdapter());
+    }
   }
 
   // Open all boxes
   Future<void> _openBoxes() async {
     await Hive.openBox<BatchHiveModel>(HiveTableConstant.batchTable);
+    await Hive.openBox<CategoryHiveModel>(HiveTableConstant.categoryTable);
+    await Hive.openBox<AuthHiveModel>(HiveTableConstant.authTable);
   }
 
   // CLose all boxes
@@ -60,7 +73,7 @@ class HiveService {
     await Hive.close();
   }
 
-  // =================== Batch CRUD Operations ===========================
+  // Hack: =================== Batch CRUD Operations ===========================
 
   // Get batch box
   Box<BatchHiveModel> get _batchBox =>
@@ -74,7 +87,6 @@ class HiveService {
 
   // Get all batches
   List<BatchHiveModel> getAllBatches() {
-    print("${_batchBox.values}");
     return _batchBox.values.toList();
   }
 
@@ -98,7 +110,7 @@ class HiveService {
     await _batchBox.clear();
   }
 
-  // =================== Category CRUD Operations ===========================
+  // Hack: =================== Category CRUD Operations ===========================
   Box<CategoryHiveModel> get _categoryBox =>
       Hive.box<CategoryHiveModel>(HiveTableConstant.categoryTable);
 
@@ -131,5 +143,39 @@ class HiveService {
   // delete All category
   Future<void> deleteAllCategory() async {
     await _categoryBox.clear();
+  }
+
+  // Hack: =================== Auth CRUD Operations ===========================
+  Box<AuthHiveModel> get _authBox =>
+      Hive.box<AuthHiveModel>(HiveTableConstant.authTable);
+
+  // register user
+  Future<AuthHiveModel> registerUser(AuthHiveModel model) async {
+    await _authBox.put(model.authId, model);
+    return model;
+  }
+
+  // login
+  Future<AuthHiveModel?> loginUser(String email, String password) async {
+    final user = _authBox.values.where(
+      (user) => user.email == email && user.password == password,
+    );
+
+    if (user.isNotEmpty) return user.first;
+    return null;
+  }
+
+  // logout
+  Future<void> logoutUser() async {}
+
+  // get current user
+  AuthHiveModel? getCurrentUser(String authId) {
+    return _authBox.get(authId);
+  }
+
+  // is email exists
+  Future<bool> isEmailExists(String email) async {
+    final users = _authBox.values.where((user) => user.email == email);
+    return users.isNotEmpty;
   }
 }

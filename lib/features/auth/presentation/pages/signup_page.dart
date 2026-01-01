@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lost_n_found/features/batch/domain/entities/batch_entity.dart';
+import 'package:lost_n_found/features/auth/presentation/state/auth_state.dart';
+import 'package:lost_n_found/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:lost_n_found/features/batch/presentation/states/batch_state.dart';
 import 'package:lost_n_found/features/batch/presentation/view_model/batch_viewmodel.dart';
-import '../../../../app/routes/app_routes.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/theme_extensions.dart';
 import '../../../../core/widgets/gradient_button.dart';
 import '../../../../core/utils/snackbar_utils.dart';
-import '../../../dashboard/presentation/pages/dashboard_page.dart';
 
 class SignupPage extends ConsumerStatefulWidget {
   const SignupPage({super.key});
@@ -27,7 +26,6 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
-  bool _isLoading = false;
   bool _agreedToTerms = false;
   String? _selectedBatch;
   String _selectedCountryCode = '+977'; // Default Nepal
@@ -61,18 +59,17 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     }
 
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        AppRoutes.pushReplacement(context, const DashboardPage());
-      }
+      // NOTE: Passing the data from here to view model
+      ref
+          .read(authViewModelProvider.notifier)
+          .register(
+            fullName: _nameController.text,
+            email: _emailController.text,
+            password: _passwordController.text,
+            username: _emailController.text.trim().split("@").first,
+            phoneNumber: '$_selectedCountryCode${_phoneController.text}',
+            batchId: _selectedBatch,
+          );
     }
   }
 
@@ -92,6 +89,22 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   @override
   Widget build(BuildContext context) {
     final batchState = ref.watch(batchViewModelProvider);
+
+    // INFO: watch auth State
+    final authState = ref.watch(authViewModelProvider);
+
+    // INFO: Listen for auth state change
+    ref.listen<AuthState>(authViewModelProvider, (previous, next) {
+      if (next.status == AuthStatus.error) {
+        SnackbarUtils.showError(
+          context,
+          next.errorMessage ?? "Registration failed",
+        );
+      } else if (next.status == AuthStatus.registered) {
+        // Navigate to dashboard
+        SnackbarUtils.showSuccess(context, "Registration successful");
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -438,7 +451,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                   GradientButton(
                     text: 'Create Account',
                     onPressed: _handleSignup,
-                    isLoading: _isLoading,
+                    isLoading: authState.status == AuthStatus.loading,
                   ),
                   const SizedBox(height: 32),
 

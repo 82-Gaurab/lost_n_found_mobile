@@ -74,8 +74,15 @@ class BatchRepository implements IBatchRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> updateBatch(BatchEntity batch) {
-    // TODO: implement updateBatch
-    throw UnimplementedError();
+  Future<Either<Failure, bool>> updateBatch(BatchEntity batch) async {
+    try {
+      final model = BatchHiveModel.fromEntity(batch);
+      final result = await _datasource.updateBatch(model);
+      if (result) return Right(true);
+
+      return Left(LocalDatabaseFailure(message: "Failed to update batch"));
+    } catch (e) {
+      return Left(LocalDatabaseFailure(message: e.toString()));
+    }
   }
 }
