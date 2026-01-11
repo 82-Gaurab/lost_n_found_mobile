@@ -27,7 +27,7 @@ class BatchRemoteDatasource implements IBatchRemoteDatasource {
     final data = response.data["data"] as List;
 
     // Note: json -> api model -> entity : from json
-    return data.map((json) => BatchApiModel.fromEntity(json)).toList();
+    return data.map((json) => BatchApiModel.fromJson(json)).toList();
   }
 
   @override
