@@ -1,10 +1,15 @@
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 abstract interface class INetworkInfo {
   Future<bool> get isConnected;
 }
+
+final networkInfoProvider = Provider<NetworkInfo>((ref) {
+  return NetworkInfo(connectivity: Connectivity());
+});
 
 class NetworkInfo implements INetworkInfo {
   final Connectivity _connectivity;
@@ -21,14 +26,15 @@ class NetworkInfo implements INetworkInfo {
       return false;
     }
 
-    return await _checkIfInternetIsAvailable();
+    // return await _checkIfInternetIsAvailable();
+    return true; // aaile ko lagi true nai return garne, localhost ma kaam garne ho ni ta
   }
 
   Future<bool> _checkIfInternetIsAvailable() async {
     try {
       final result = await InternetAddress.lookup("google.com");
       return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-    } on SocketException {
+    } on SocketException catch (_) {
       return false;
     }
   }
