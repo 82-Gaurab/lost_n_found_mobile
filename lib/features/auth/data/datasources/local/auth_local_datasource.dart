@@ -4,7 +4,7 @@ import 'package:lost_n_found/core/services/storage/user_session_service.dart';
 import 'package:lost_n_found/features/auth/data/datasources/auth_datasource.dart';
 import 'package:lost_n_found/features/auth/data/models/auth_hive_model.dart';
 
-final authLocalDatasourceProvider = Provider<IAuthDatasource>((ref) {
+final authLocalDatasourceProvider = Provider<IAuthLocalDatasource>((ref) {
   final hiveService = ref.read(hiveServiceProvider);
   final userSessionService = ref.read(userSessionServiceProvider);
   return AuthLocalDatasource(
@@ -13,7 +13,7 @@ final authLocalDatasourceProvider = Provider<IAuthDatasource>((ref) {
   );
 });
 
-class AuthLocalDatasource implements IAuthDatasource {
+class AuthLocalDatasource implements IAuthLocalDatasource {
   final HiveService _hiveService;
   final UserSessionService _userSessionService;
 
@@ -62,22 +62,31 @@ class AuthLocalDatasource implements IAuthDatasource {
   }
 
   @override
-  Future<bool> register(AuthHiveModel model) async {
-    try {
-      await _hiveService.registerUser(model);
-      return true;
-    } catch (e) {
-      return false;
-    }
+  Future<AuthHiveModel> register(AuthHiveModel model) async {
+    return await _hiveService.registerUser(model);
   }
 
   @override
-  Future<bool> isEmailExists(String email) async {
-    try {
-      await _hiveService.isEmailExists(email);
-      return true;
-    } catch (e) {
-      return false;
-    }
+  Future<bool> deleteUser(String authId) {
+    // TODO: implement deleteUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<AuthHiveModel?> getUserByEmail(String email) {
+    // TODO: implement getUserByEmail
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<AuthHiveModel?> getUserById(String authId) {
+    // TODO: implement getUserById
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> updateUser(AuthHiveModel user) {
+    // TODO: implement updateUser
+    throw UnimplementedError();
   }
 }

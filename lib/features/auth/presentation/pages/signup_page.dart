@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lost_n_found/app/routes/app_routes.dart';
+import 'package:lost_n_found/features/auth/presentation/pages/login_page.dart';
 import 'package:lost_n_found/features/auth/presentation/state/auth_state.dart';
 import 'package:lost_n_found/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:lost_n_found/features/batch/presentation/states/batch_state.dart';
@@ -103,6 +105,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       } else if (next.status == AuthStatus.registered) {
         // Navigate to dashboard
         SnackbarUtils.showSuccess(context, "Registration successful");
+        AppRoutes.pushReplacement(context, LoginPage());
       }
     });
 
