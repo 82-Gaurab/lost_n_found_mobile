@@ -74,7 +74,7 @@ class UserSessionService {
     return _sharedPreferences.getBool(_keysIsLoggedIn) ?? false;
   }
 
-  String? getUserId() {
+  String? getCurrentUserId() {
     return _sharedPreferences.getString(_keyUserId);
   }
 

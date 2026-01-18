@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lost_n_found/features/item/presentation/pages/item_detail_page.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/theme_extensions.dart';
 import '../../../../app/routes/app_routes.dart';
-import '../../../item/presentation/pages/item_detail_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -450,7 +450,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ItemDetailPage(
                                   title: item['title'],
                                   location: item['location'],
-                                  time: item['time'],
                                   category: item['category'],
                                   isLost: item['isLost'],
                                   description:

@@ -2,17 +2,17 @@ import 'package:equatable/equatable.dart';
 
 class CategoryEntity extends Equatable {
   final String? categoryId;
-  final String categoryName;
+  final String name;
   final String? description;
   final String? status;
 
   const CategoryEntity({
     this.categoryId,
-    required this.categoryName,
+    required this.name,
     this.description,
     this.status,
   });
 
   @override
-  List<Object?> get props => [categoryId, categoryName, description, status];
+  List<Object?> get props => [categoryId, name, description, status];
 }

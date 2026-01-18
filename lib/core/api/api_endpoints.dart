@@ -1,11 +1,32 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+
 class ApiEndpoints {
   ApiEndpoints._();
 
+  static const bool isPhysicalDevice = false;
+
+  static const String compIpAddress = "192.168.100.8";
+
+  static const String portPath = "3000/api/v1";
+
   //Info: Base URL
-  // static const String baseUrl =
-  //     "http://10.0.2.2:3000/api/v1"; // info: for android
-  static const String baseUrl =
-      "http://192.168.100.8:3000/api/v1"; // info: for physical device use computers IP
+  static String get baseUrl {
+    if (isPhysicalDevice) {
+      return "http://$compIpAddress:$portPath";
+    }
+    if (kIsWeb) {
+      return "http://localhost:$portPath";
+    } else if (Platform.isAndroid) {
+      // info: for android
+      return "http://10.0.2.2:$portPath";
+    } else if (Platform.isIOS) {
+      return "http://localhost:$portPath";
+    } else {
+      return "http://localhost:$portPath";
+    }
+  }
 
   // Note: For physical device use computer IP: "http:/102.168.x.x:5000/api/v1"
 

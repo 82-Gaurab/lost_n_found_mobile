@@ -18,7 +18,7 @@ class CategoryHiveModelAdapter extends TypeAdapter<CategoryHiveModel> {
     };
     return CategoryHiveModel(
       categoryId: fields[0] as String?,
-      categoryName: fields[1] as String,
+      name: fields[1] as String,
       description: fields[2] as String?,
       status: fields[3] as String?,
     );
@@ -31,7 +31,7 @@ class CategoryHiveModelAdapter extends TypeAdapter<CategoryHiveModel> {
       ..writeByte(0)
       ..write(obj.categoryId)
       ..writeByte(1)
-      ..write(obj.categoryName)
+      ..write(obj.name)
       ..writeByte(2)
       ..write(obj.description)
       ..writeByte(3)

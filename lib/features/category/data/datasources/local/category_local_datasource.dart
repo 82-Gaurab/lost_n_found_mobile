@@ -1,12 +1,19 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lost_n_found/core/services/hive/hive_service.dart';
-import 'package:lost_n_found/features/category/data/datasource/category_datasource.dart';
-import 'package:lost_n_found/features/category/data/model/category_hive_model.dart';
+import 'package:lost_n_found/features/category/data/datasources/category_datasource.dart';
+import 'package:lost_n_found/features/category/data/models/category_hive_model.dart';
 
-class CategoryLocalDatasource implements ICategoryDatasource {
+final categoryLocalDatasourceProvider =
+    Provider<CategoryLocalDatasource>((ref) {
+  final hiveService = ref.read(hiveServiceProvider);
+  return CategoryLocalDatasource(hiveService: hiveService);
+});
+
+class CategoryLocalDatasource implements ICategoryDataSource {
   final HiveService _hiveService;
 
-  const CategoryLocalDatasource({required HiveService hiveService})
-    : _hiveService = hiveService;
+  CategoryLocalDatasource({required HiveService hiveService})
+      : _hiveService = hiveService;
 
   @override
   Future<bool> createCategory(CategoryHiveModel category) async {
@@ -29,7 +36,7 @@ class CategoryLocalDatasource implements ICategoryDatasource {
   }
 
   @override
-  Future<List<CategoryHiveModel>> getAllCategory() async {
+  Future<List<CategoryHiveModel>> getAllCategories() async {
     try {
       return _hiveService.getAllCategories();
     } catch (e) {

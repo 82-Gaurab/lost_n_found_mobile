@@ -3,7 +3,7 @@ import 'package:lost_n_found/core/constants/hive_table_constant.dart';
 import 'package:lost_n_found/features/category/domain/entities/category_entity.dart';
 import 'package:uuid/uuid.dart';
 
-part "category_hive_model.g.dart";
+part 'category_hive_model.g.dart';
 
 @HiveType(typeId: HiveTableConstant.categoryTypeId)
 class CategoryHiveModel extends HiveObject {
@@ -11,7 +11,7 @@ class CategoryHiveModel extends HiveObject {
   final String? categoryId;
 
   @HiveField(1)
-  final String categoryName;
+  final String name;
 
   @HiveField(2)
   final String? description;
@@ -21,24 +21,28 @@ class CategoryHiveModel extends HiveObject {
 
   CategoryHiveModel({
     String? categoryId,
-    required this.categoryName,
-    String? description,
+    required this.name,
+    this.description,
     String? status,
-  }) : categoryId = categoryId ?? Uuid().v4(),
-       description = description ?? "description",
-       status = status ?? "active";
+  })  : categoryId = categoryId ?? const Uuid().v4(),
+        status = status ?? 'active';
 
   CategoryEntity toEntity() {
     return CategoryEntity(
       categoryId: categoryId,
-      categoryName: categoryName,
+      name: name,
       description: description,
       status: status,
     );
   }
 
   factory CategoryHiveModel.fromEntity(CategoryEntity entity) {
-    return CategoryHiveModel(categoryName: entity.categoryName);
+    return CategoryHiveModel(
+      categoryId: entity.categoryId,
+      name: entity.name,
+      description: entity.description,
+      status: entity.status,
+    );
   }
 
   static List<CategoryEntity> toEntityList(List<CategoryHiveModel> models) {
