@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -119,7 +121,7 @@ class _ReportItemPageState extends ConsumerState<ReportItemPage> {
   }
 
   //Info: Code for camera
-  Future<void> _pickThroughCamera() async {
+  Future<void> _pickFromCamera() async {
     final hasPermission = await _getUserPermission(Permission.camera);
     if (!hasPermission) return;
 
@@ -137,7 +139,7 @@ class _ReportItemPageState extends ConsumerState<ReportItemPage> {
   }
 
   //info: code for gallery
-  Future<void> _pickThroughGallery({bool allowMultiple = false}) async {
+  Future<void> _pickFromGallery({bool allowMultiple = false}) async {
     try {
       if (allowMultiple) {
         final List<XFile> images = await _imagePicker.pickMultiImage(
@@ -168,6 +170,72 @@ class _ReportItemPageState extends ConsumerState<ReportItemPage> {
         SnackbarUtils.showError(context, "Gallery not accessed");
       }
     }
+  }
+
+  //info: code for video
+  Future<void> _pickFromVideo() async {
+    try {
+      final hasPermission = await _getUserPermission(Permission.camera);
+      if (!hasPermission) return;
+      final hasMicPermission = await _getUserPermission(Permission.microphone);
+      if (!hasMicPermission) return;
+
+      final XFile? video = await _imagePicker.pickVideo(
+        source: ImageSource.camera,
+        maxDuration: const Duration(minutes: 1),
+      );
+
+      if (video != null) {
+        setState(() {
+          _selectedMedia.clear();
+          _selectedMedia.add(video);
+        });
+      }
+    } catch (e) {
+      _showPermissionDeniedDialog();
+    }
+  }
+
+  //info: code for dialogBox : show dialog for menu
+  Future<void> _pickMedia() async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: context.surfaceColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.camera),
+              title: Text("Open Camera"),
+              onTap: () {
+                Navigator.pop(context);
+                _pickFromCamera();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.image),
+              title: Text("Open Camera"),
+              onTap: () {
+                Navigator.pop(context);
+                _pickFromGallery();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.videocam),
+              title: Text("Open Camera"),
+              onTap: () {
+                Navigator.pop(context);
+                _pickFromVideo();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -364,7 +432,7 @@ class _ReportItemPageState extends ConsumerState<ReportItemPage> {
                           // Add Photo Button
                           GestureDetector(
                             onTap: () {
-                              _pickThroughCamera();
+                              _pickMedia();
                             },
                             child: Container(
                               width: 100,
@@ -409,6 +477,47 @@ class _ReportItemPageState extends ConsumerState<ReportItemPage> {
                               ),
                             ),
                           ),
+                          if (_selectedMedia.isNotEmpty) ...[
+                            Stack(
+                              children: [
+                                Container(
+                                  width: 120,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    image: DecorationImage(
+                                      image: FileImage(
+                                        File(_selectedMedia[0].path),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 4,
+                                  right: 4,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedMedia.clear();
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      padding: EdgeInsets.all(4),
+                                      child: Icon(
+                                        Icons.close,
+                                        size: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ],
                       ),
 
