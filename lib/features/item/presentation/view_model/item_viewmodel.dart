@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lost_n_found/features/item/domain/entities/item_entity.dart';
 import 'package:lost_n_found/features/item/domain/usecases/create_item_usecase.dart';
@@ -6,6 +8,7 @@ import 'package:lost_n_found/features/item/domain/usecases/get_all_items_usecase
 import 'package:lost_n_found/features/item/domain/usecases/get_item_by_id_usecase.dart';
 import 'package:lost_n_found/features/item/domain/usecases/get_items_by_user_usecase.dart';
 import 'package:lost_n_found/features/item/domain/usecases/update_item_usecase.dart';
+import 'package:lost_n_found/features/item/domain/usecases/upload_image_usecase.dart';
 import 'package:lost_n_found/features/item/presentation/state/item_state.dart';
 
 final itemViewModelProvider = NotifierProvider<ItemViewModel, ItemState>(
@@ -19,6 +22,7 @@ class ItemViewModel extends Notifier<ItemState> {
   late final CreateItemUsecase _createItemUsecase;
   late final UpdateItemUsecase _updateItemUsecase;
   late final DeleteItemUsecase _deleteItemUsecase;
+  late final UploadImageUsecase _uploadImageUsecase;
 
   @override
   ItemState build() {
@@ -28,6 +32,7 @@ class ItemViewModel extends Notifier<ItemState> {
     _createItemUsecase = ref.read(createItemUsecaseProvider);
     _updateItemUsecase = ref.read(updateItemUsecaseProvider);
     _deleteItemUsecase = ref.read(deleteItemUsecaseProvider);
+    _uploadImageUsecase = ref.read(uploadImageUsecaseProvider);
     return const ItemState();
   }
 
@@ -194,6 +199,28 @@ class ItemViewModel extends Notifier<ItemState> {
       (success) {
         state = state.copyWith(status: ItemStatus.deleted);
         getAllItems();
+      },
+    );
+  }
+
+  // upload photo
+  Future<void> uploadPhoto(File image) async {
+    state = state.copyWith(status: ItemStatus.loading);
+    final params = UploadImageUsecaseParams(image: image);
+    final result = await _uploadImageUsecase(params);
+
+    result.fold(
+      (failure) {
+        state = state.copyWith(
+          status: ItemStatus.error,
+          errorMessage: failure.message,
+        );
+      },
+      (imageName) {
+        state = state.copyWith(
+          status: ItemStatus.loaded,
+          uploadPhotoName: imageName,
+        );  
       },
     );
   }
