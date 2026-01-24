@@ -218,7 +218,7 @@ class _ReportItemPageState extends ConsumerState<ReportItemPage> {
             ),
             ListTile(
               leading: Icon(Icons.image),
-              title: Text("Open Camera"),
+              title: Text("Open Gallery"),
               onTap: () {
                 Navigator.pop(context);
                 _pickFromGallery();
@@ -226,7 +226,7 @@ class _ReportItemPageState extends ConsumerState<ReportItemPage> {
             ),
             ListTile(
               leading: Icon(Icons.videocam),
-              title: Text("Open Camera"),
+              title: Text("Record Video"),
               onTap: () {
                 Navigator.pop(context);
                 _pickFromVideo();
