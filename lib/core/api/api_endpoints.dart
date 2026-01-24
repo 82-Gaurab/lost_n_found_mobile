@@ -52,6 +52,8 @@ class ApiEndpoints {
   static const String items = "/items";
   static String itemsById(String id) => '/items/$id';
   static String itemsClaim(String id) => '/items/$id/claim';
+  static String itemUploadPhoto = '/items/upload-photo';
+  static String itemUploadVideo = '/items/upload-video';
 
   // Hack: ========== Comment Endpoints ===========
   static const String comments = "/comments";

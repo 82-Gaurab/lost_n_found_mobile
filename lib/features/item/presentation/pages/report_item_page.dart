@@ -135,6 +135,11 @@ class _ReportItemPageState extends ConsumerState<ReportItemPage> {
         _selectedMedia.clear();
         _selectedMedia.add(photo);
       });
+
+      // info: upload image to server
+      await ref
+          .read(itemViewModelProvider.notifier)
+          .uploadPhoto(File(photo.path));
     }
   }
 
@@ -162,6 +167,11 @@ class _ReportItemPageState extends ConsumerState<ReportItemPage> {
             _selectedMedia.clear();
             _selectedMedia.add(image);
           });
+
+          // info: upload image to server
+          await ref
+              .read(itemViewModelProvider.notifier)
+              .uploadPhoto(File(image.path));
         }
       }
     } catch (e) {
@@ -218,7 +228,7 @@ class _ReportItemPageState extends ConsumerState<ReportItemPage> {
             ),
             ListTile(
               leading: Icon(Icons.image),
-              title: Text("Open Gallery"),
+              title: Text("Choose from Gallery"),
               onTap: () {
                 Navigator.pop(context);
                 _pickFromGallery();
